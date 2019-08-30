@@ -1,6 +1,5 @@
 from sys import argv
 import os
-import re
 from PIL import Image, ImageFont, ImageDraw, ImageColor
 
 output_dimensions = (1612, 640)
@@ -8,28 +7,30 @@ font_size = 78
 padding = {"top": -14, "right": 3, "bottom": 5}
 output_dir = os.path.join(os.getcwd(), "output")
 
-try:
-    arg = argv[1]
-except IndexError as e:
-    raise Exception("No hexcode argument received")
-
 if os.path.isfile(output_dir):
     raise Exception("Specified output directory is a file")
 elif not os.path.isdir(output_dir):
     os.mkdir(output_dir)
 
-match = re.match(r"^#?(?P<hexcode>([a-f\d]{3}|[a-f\d]{6}))$", arg, re.IGNORECASE)
-if not match:
-    raise Exception("Invalid hexcode format")
+try:
+    arg = argv[1]
+except IndexError as e:
+    raise Exception("No hexcode argument received")
 
-original_code = match.group("hexcode").upper()
+try:
+    int(arg, base=16)
+except ValueError:
+    raise Exception("Only accepts hex digits for the colour code")
 
-if len(match.group("hexcode")) == 3:
-    hex_list = list(match.group("hexcode").upper())
-    hex_list = map(lambda d: d * 2, hex_list)
+original_code = arg.upper()
+
+if len(arg) == 3:
+    hex_list = map(lambda d: d * 2, arg)
     hexcode = "#" + "".join(hex_list)
+elif len(arg) == 6:
+    hexcode = "#" + arg.upper()
 else:
-    hexcode = "#" + match.group("hexcode").upper()
+    raise Exception("Colour has to be either 3 or 6 hex digits long")
 
 image = Image.new("RGB", output_dimensions, color=ImageColor.getrgb(hexcode))
 
