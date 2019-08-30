@@ -18,9 +18,7 @@ if os.path.isfile(output_dir):
 elif not os.path.isdir(output_dir):
     os.mkdir(output_dir)
 
-match = re.match(r"^#?(?P<hexcode>[a-f\d]{6})$", arg, re.IGNORECASE)
-match = match or re.match(r"^#?(?P<hexcode>[a-f\d]{3})$", arg, re.IGNORECASE)
-
+match = re.match(r"^#?(?P<hexcode>([a-f\d]{3}|[a-f\d]{6}))$", arg, re.IGNORECASE)
 if not match:
     raise Exception("Invalid hexcode format")
 
